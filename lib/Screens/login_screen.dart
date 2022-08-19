@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:testproject/contants.dart';
 
 import '../Providers/UserProvider/user_state_provider.dart';
 
@@ -156,13 +157,19 @@ class _SigninPageState extends ConsumerState<SigninPage> {
                 ),
                 onPressed: () async {
                   try {
-                    
                     log("message");
+                    onLoading(context);
                     await ref
                         .read(userStateprovider.notifier)
                         .login(_etEmail.text.trim(), _etPassword.text.trim());
-                    GoRouter.of(context).goNamed("Home");
-                  } catch (e) {}
+                    if (mounted) {
+                      Navigator.pop(context);
+                      context.goNamed("Home");
+                    }
+                  } catch (e) {
+                    Navigator.pop(context);
+                    showSnackbar(text: e.toString(), context: context);
+                  }
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.0),

@@ -2,7 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:testproject/Providers/UserProvider/user_state_provider.dart';
+
+import '../contants.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -154,11 +157,20 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     borderRadius: BorderRadius.circular(3.0),
                   )),
                 ),
-                onPressed: () {
-                  log("message");
-                  ref
-                      .read(userStateprovider.notifier)
-                      .signUp(_etEmail.text.trim(), _etPassword.text.trim());
+                onPressed: () async {
+                  try {
+                    log("message");
+                    await ref
+                        .read(userStateprovider.notifier)
+                        .signUp(_etEmail.text.trim(), _etPassword.text.trim());
+                    if (mounted) {
+                      Navigator.pop(context);
+                      context.goNamed("Home");
+                    }
+                  } catch (e) {
+                    Navigator.pop(context);
+                    showSnackbar(text: e.toString(), context: context);
+                  }
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.0),
